@@ -1,0 +1,49 @@
+.voiceButton{
+
+    width:44px;
+
+    height:44px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    background:#2E7D32;
+
+    color:white;
+
+    font-size:18px;
+
+}
+
+.voiceButton:hover{
+
+    background:#1B5E20;
+
+}
+
+.statusPanel{
+
+    margin-top:20px;
+
+    background:#F4F8F3;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    font-size:13px;
+
+}
+
+.statusRow{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:6px;
+
+}

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STR GIMS — Login</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+
+    <section id="splashScreen" class="splash-screen">
+        <div class="splash-bg"></div>
+        <div class="splash-overlay"></div>
+        <div class="splash-content">
+            <div class="splash-badge">🌿 GIMS · Geoinformatics Wildlife System</div>
+            <h1 class="splash-title">GIMS Animal<br>&amp; Plant Inventory</h1>
+            <p class="splash-footer-loc">Sathyamangalam Tiger Reserve · Tamil Nadu, India</p>
+            <button class="splash-enter-btn" onclick="enterLogin()">
+                Enter System &nbsp;→
+            </button>
+        </div>
+    </section>
+
+    <section id="loginScreen" class="login-screen v2 hidden">
+        <div class="login-card v2">
+            <div class="login-logo">
+                <div class="login-logo-icon">🌿</div>
+                <div>
+                    <p class="login-title">GIMS Animal &amp; Plant Inventory</p>
+                    <p class="login-tagline">Sathyamangalam Tiger Reserve · PostgreSQL + GeoServer 2.28.4</p>
+                </div>
+            </div>
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Enter your username" autocomplete="username"
+                onkeydown="if(event.key==='Enter') document.getElementById('password').focus()" />
+            <label for="password">Password</label>
+            <div class="voice-row">
+                <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" />
+            </div>
+            <div id="loginError"
+                style="display:none;margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12.5px;background:#fdecea;color:#b9412e;border:1px solid #b9412e44;">
+            </div>
+            <button id="loginButton" type="button" class="btn btn-success">🔓 Sign in </button>
+            <!--<button id="loginButton" type="button" style="width:100%; margin-top:16px;">🔓 Sign in to Dashboard</button>-->
+            <button class="secondary" style="width:100%; margin-top:8px; font-size:12px;" onclick="openResetModal()">🔑
+                Forgot
+                / Reset Password</button>
+            <button class="secondary" style="width:100%; margin-top:8px; font-size:12px;" onclick="goBackToSplash()">←
+                Back to
+                overview</button>
+            <button class="secondary" style="width:100%; margin-top:8px; font-size:12px;"
+                onclick="openRegisterModal()">👤 New
+                User Registration</button>
+            <div class="statusPanel">
+                <h4>System Status</h4>
+                <div class="statusRow"><span>PostgREST</span><span id="statusPostgREST">Checking...</span></div>
+                <div class="statusRow"><span>GeoServer</span><span id="statusGeoServer">Checking...</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── New User Registration Modal ── -->
+    <div id="registerModal"
+        style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,12,.72);align-items:center;justify-content:center;padding:16px;">
+        <div
+            style="width:min(460px,100%);background:#fffdf7;border-radius:12px;padding:28px;box-shadow:0 20px 50px rgba(10,22,12,.4);position:relative;">
+            <button onclick="closeRegisterModal()"
+                style="position:absolute;top:12px;right:12px;background:#f0ede6;color:#60705d;border-radius:50%;width:30px;height:30px;min-height:unset;padding:0;font-size:16px;line-height:1;">✕</button>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                <div
+                    style="width:38px;height:38px;background:linear-gradient(135deg,#2e6b3f,#4d8d5e);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
+                    👤</div>
+                <div>
+                    <div style="font-size:16px;font-weight:900;color:#15351f;">New User Registration</div>
+                    <div style="font-size:11px;color:#60705d;">Sathyamangalam Tiger Reserve · GIMS Portal</div>
+                </div>
+            </div>
+            <label
+                style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Full
+                Name</label>
+            <input id="regFullName" placeholder="e.g. Rajan P"
+                style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+            <label
+                style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Username</label>
+            <input id="regUsername" placeholder="e.g. ranger_rajan"
+                style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+            <label
+                style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Password</label>
+            <input id="regPassword" type="password" placeholder="Min 6 characters"
+                style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+            <label
+                style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Role</label>
+            <select id="regRole"
+                style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;background:white;">
+                <option value="operator">Operator — Read-only map &amp; species</option>
+                <option value="admin">Admin — Full access + export</option>
+            </select>
+            <label
+                style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Email
+                (optional)</label>
+            <input id="regEmail" type="email" placeholder="ranger@str.gov.in"
+                style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+            <div id="regStatus"
+                style="display:none;margin-top:12px;padding:10px 12px;border-radius:6px;font-size:13px;font-weight:600;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;">
+                <button onclick="closeRegisterModal()" style="background:#dfe8d8;color:#15351f;">Cancel</button>
+                <button onclick="submitRegistration()" id="regSubmitBtn" style="background:#2e6b3f;color:white;">✅
+                    Register
+                    User</button>
+            </div>
+            <div
+                style="margin-top:14px;padding:10px;background:#edf3ea;border:1px dashed #d8decf;border-radius:6px;font-size:11px;color:#60705d;line-height:1.55;">
+                <strong>Note:</strong> User credentials are saved to the GIMS PostgreSQL database (table:
+                <code>gims_users</code>). If GeoServer is offline, registration is queued locally for this browser and
+                the new
+                account appears in the user list above.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // If a session already exists, skip straight to the portal
+        (function () {
+            if (sessionStorage.getItem('gims_session')) {
+                window.location.href = 'index.html';
+            }
+        })();
+
+        function enterLogin() {
+            document.getElementById('splashScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        function goBackToSplash() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('splashScreen').classList.remove('hidden');
+        }
+
+        // Matches PostgreSQL role mapping: p15rajan & postgres = admin, Operator = no admin access
+        const ROLE_CONFIG_CHECK = {
+            p15rajan: 'admin',
+            postgres: 'admin',
+            Operator: 'operator'
+        };
+
+        // ── Load any previously registered users (persisted in this browser) ──
+        function getRegisteredUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('gims_registered_users') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        (function populateRegisteredUsers() {
+            var users = getRegisteredUsers();
+            users.forEach(function (u) {
+                ROLE_CONFIG_CHECK[u.username] = u.role;
+            });
+            // Also load any seed password overrides that were saved after a reset
+            try {
+                var overrides = JSON.parse(localStorage.getItem('gims_seed_pw_overrides') || '{}');
+                Object.keys(overrides).forEach(function (k) {
+                    if (SEED_PASSWORD_HASHES[k] !== undefined) SEED_PASSWORD_HASHES[k] = overrides[k];
+                });
+            } catch (e) { }
+        })();
+
+        // Client-side password hashing (SHA-256). NOTE: this is still a front-end-only
+        // demo check — a determined user can bypass it via devtools since there's no
+        // real backend session here. Real access control must be enforced server-side
+        // (e.g. GeoServer/PostgreSQL auth), not in this JS file.
+
+        sessionStorage.setItem('gims_session', JSON.stringify({
+            username: username,
+            level: level,
+            ts: Date.now()
+        }));
+
+        window.location.href = 'index.html';
+    }
+
+        // ── New User Registration ──────────────────────────────────────
+        function openRegisterModal() {
+            var modal = document.getElementById('registerModal');
+            if (modal) modal.style.display = 'flex';
+            ['regFullName', 'regUsername', 'regPassword', 'regEmail'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            var roleEl = document.getElementById('regRole');
+            if (roleEl) roleEl.value = 'operator';
+            var status = document.getElementById('regStatus');
+            if (status) status.style.display = 'none';
+        }
+
+        function closeRegisterModal() {
+            var modal = document.getElementById('registerModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function _showRegStatus(msg, bg, color) {
+            var el = document.getElementById('regStatus');
+            if (!el) return;
+            el.style.display = 'block';
+            el.style.background = bg;
+            el.style.color = color;
+            el.style.border = '1px solid ' + color + '44';
+            el.innerHTML = msg;
+        }
+
+        async function submitRegistration() {
+            var fullName = (document.getElementById('regFullName').value || '').trim();
+            var username = (document.getElementById('regUsername').value || '').trim();
+            var password = (document.getElementById('regPassword').value || '').trim();
+            var role = document.getElementById('regRole').value || 'operator';
+            var email = (document.getElementById('regEmail').value || '').trim();
+            var btn = document.getElementById('regSubmitBtn');
+
+            var existing = getRegisteredUsers();
+            var knownUsernames = ['p15rajan', 'postgres', 'Operator'].concat(existing.map(function (u) { return u.username; }));
+
+            if (!fullName || !username || !password) {
+                _showRegStatus('⚠️ Full name, username and password are required.', '#fdecea', '#b9412e');
+                return;
+            }
+            if (password.length < 6) {
+                _showRegStatus('⚠️ Password must be at least 6 characters.', '#fdecea', '#b9412e');
+                return;
+            }
+            if (knownUsernames.indexOf(username) !== -1) {
+                _showRegStatus('⚠️ Username "' + username + '" already exists. Choose a different one.', '#fdecea', '#b9412e');
+                return;
+            }
+
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Registering...'; }
+
+            var passwordHash = await _sha256(password);
+
+            var payload = {
+                username: username,
+                full_name: fullName,
+                password_hash: passwordHash,
+                role: role,
+                email: email,
+                created_at: new Date().toISOString()
+            };
+
+            var dbSuccess = false;
+            try {
+                var resp = await fetch('http://localhost:3000/gims_users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                    body: JSON.stringify(payload)
+                });
+                if (resp.ok) dbSuccess = true;
+            } catch (e) {
+                dbSuccess = false;
+            }
+
+            // Persist locally (including the hash) so the user can actually log in going forward
+            existing.push({ username: username, role: role, fullName: fullName, email: email, passwordHash: passwordHash });
+            localStorage.setItem('gims_registered_users', JSON.stringify(existing));
+
+            ROLE_CONFIG_CHECK[username] = role;
+            var sel = document.getElementById('username');
+            var opt = document.createElement('option');
+            opt.value = username;
+            opt.textContent = username + ' — ' + (role === 'admin' ? 'Admin' : 'Operator');
+            sel.appendChild(opt);
+
+            if (dbSuccess) {
+                _showRegStatus(
+                    '✅ User <strong>' + rEscapeForDisplay(username) + '</strong> registered and saved to PostgreSQL (gims_users table).',
+                    '#e3f0e5', '#1d5c2f'
+                );
+            } else {
+                _showRegStatus(
+                    '✅ User <strong>' + rEscapeForDisplay(username) + '</strong> added and available in the login list above.<br>' +
+                    '<small>⚠️ PostgreSQL not reachable — saved locally in this browser. ' +
+                    'To persist server-side, use a <em>parameterized</em> query (never string-concatenate values into SQL):<br>' +
+                    '<code>INSERT INTO gims_users (username, full_name, password_hash, role, email) VALUES ($1, $2, $3, $4, $5);</code><br>' +
+                    '<code>-- params: [' + rEscapeForDisplay(username) + ', ' + rEscapeForDisplay(fullName) + ', &lt;hash&gt;, ' + rEscapeForDisplay(role) + ', ' + rEscapeForDisplay(email) + ']</code></small>',
+                    '#fff8e8', '#6b5a1b'
+                );
+            }
+
+            if (btn) { btn.disabled = false; btn.textContent = '✅ Register User'; }
+        }
+
+        function rEscapeForDisplay(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        // ── Reset Password ─────────────────────────────────────────────
+        function openResetModal() {
+            var modal = document.getElementById('resetModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            // Pre-fill username if already typed
+            var u = (document.getElementById('username').value || '').trim();
+            var el = document.getElementById('resetUsername');
+            if (el) el.value = u;
+            ['resetNewPassword', 'resetConfirmPassword'].forEach(function (id) {
+                var e = document.getElementById(id); if (e) e.value = '';
+            });
+            document.getElementById('resetStep1').style.display = 'block';
+            document.getElementById('resetStep2').style.display = 'none';
+            var st = document.getElementById('resetStatus'); if (st) st.style.display = 'none';
+        }
+
+        function closeResetModal() {
+            var modal = document.getElementById('resetModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function _showResetStatus(msg, bg, color) {
+            var el = document.getElementById('resetStatus');
+            if (!el) return;
+            el.style.display = 'block';
+            el.style.background = bg;
+            el.style.color = color;
+            el.style.border = '1px solid ' + color + '44';
+            el.innerHTML = msg;
+        }
+
+        function verifyResetUser() {
+            var username = (document.getElementById('resetUsername').value || '').trim();
+            if (!username) { _showResetStatus('⚠️ Please enter your username.', '#fdecea', '#b9412e'); return; }
+
+            // Check the user exists in seeded accounts or registered list
+            var isSeed = !!SEED_PASSWORD_HASHES[username];
+            var regUser = getRegisteredUsers().find(function (u) { return u.username === username; });
+            if (!isSeed && !regUser) {
+                _showResetStatus('❌ Username "' + rEscapeForDisplay(username) + '" not found.', '#fdecea', '#b9412e');
+                return;
+            }
+            // Move to step 2
+            document.getElementById('resetStep1').style.display = 'none';
+            document.getElementById('resetStep2').style.display = 'block';
+            var st = document.getElementById('resetStatus'); if (st) st.style.display = 'none';
+            document.getElementById('resetNewPassword').focus();
+        }
+
+        async function submitReset() {
+            var username = (document.getElementById('resetUsername').value || '').trim();
+            var newPass = document.getElementById('resetNewPassword').value || '';
+            var confirmPass = document.getElementById('resetConfirmPassword').value || '';
+
+            if (!newPass || newPass.length < 6) {
+                _showResetStatus('⚠️ New password must be at least 6 characters.', '#fdecea', '#b9412e'); return;
+            }
+            if (newPass !== confirmPass) {
+                _showResetStatus('⚠️ Passwords do not match.', '#fdecea', '#b9412e'); return;
+            }
+
+            var btn = document.getElementById('resetSubmitBtn');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Saving...'; }
+
+            var newHash = await _sha256(newPass);
+
+            // Update seeded account hash in memory
+            if (SEED_PASSWORD_HASHES[username] !== undefined) {
+                SEED_PASSWORD_HASHES[username] = newHash;
+            }
+
+            // Update registered user's hash in localStorage
+            var users = getRegisteredUsers();
+            var idx = users.findIndex(function (u) { return u.username === username; });
+            if (idx !== -1) {
+                users[idx].passwordHash = newHash;
+                localStorage.setItem('gims_registered_users', JSON.stringify(users));
+            }
+
+            // Persist seeded-account overrides so they survive page refresh
+            var seedOverrides = {};
+            try { seedOverrides = JSON.parse(localStorage.getItem('gims_seed_pw_overrides') || '{}'); } catch (e) { }
+            seedOverrides[username] = newHash;
+            localStorage.setItem('gims_seed_pw_overrides', JSON.stringify(seedOverrides));
+
+            _showResetStatus('✅ Password for <strong>' + rEscapeForDisplay(username) + '</strong> has been updated. You can now log in.', '#e3f0e5', '#1d5c2f');
+            if (btn) { btn.disabled = false; btn.textContent = '✅ Reset Password'; }
+            setTimeout(closeResetModal, 2200);
+        }
+    </script>
+
+    <!-- ── Reset Password Modal ── -->
+    <div id="resetModal"
+        style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(10,22,12,.72);align-items:center;justify-content:center;padding:16px;">
+        <div
+            style="width:min(440px,100%);background:#fffdf7;border-radius:12px;padding:28px;box-shadow:0 20px 50px rgba(10,22,12,.4);position:relative;">
+            <button onclick="closeResetModal()"
+                style="position:absolute;top:12px;right:12px;background:#f0ede6;color:#60705d;border-radius:50%;width:30px;height:30px;min-height:unset;padding:0;font-size:16px;line-height:1;">✕</button>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                <div
+                    style="width:38px;height:38px;background:linear-gradient(135deg,#2e6b3f,#4d8d5e);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
+                    🔑</div>
+                <div>
+                    <div style="font-size:16px;font-weight:900;color:#15351f;">Reset Password</div>
+                    <div style="font-size:11px;color:#60705d;">Sathyamangalam Tiger Reserve · GIMS Portal</div>
+                </div>
+            </div>
+
+            <!-- Step 1: Enter username -->
+            <div id="resetStep1">
+                <label
+                    style="display:block;margin:0 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Username</label>
+                <input id="resetUsername" placeholder="Enter your username"
+                    onkeydown="if(event.key==='Enter') verifyResetUser()"
+                    style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+                    <button onclick="closeResetModal()" style="background:#dfe8d8;color:#15351f;">Cancel</button>
+                    <button onclick="verifyResetUser()" style="background:#2e6b3f;color:white;">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Set new password -->
+            <div id="resetStep2" style="display:none;">
+                <label
+                    style="display:block;margin:0 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">New
+                    Password</label>
+                <input id="resetNewPassword" type="password" placeholder="Min 6 characters"
+                    onkeydown="if(event.key==='Enter') document.getElementById('resetConfirmPassword').focus()"
+                    style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+                <label
+                    style="display:block;margin:10px 0 5px;font-size:11px;font-weight:700;color:#60705d;text-transform:uppercase;">Confirm
+                    New Password</label>
+                <input id="resetConfirmPassword" type="password" placeholder="Re-enter password"
+                    onkeydown="if(event.key==='Enter') submitReset()"
+                    style="width:100%;min-height:40px;border:1px solid #d8decf;border-radius:6px;padding:8px 11px;font:inherit;" />
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+                    <button onclick="closeResetModal()" style="background:#dfe8d8;color:#15351f;">Cancel</button>
+                    <button onclick="submitReset()" id="resetSubmitBtn" style="background:#2e6b3f;color:white;">✅ Reset
+                        Password</button>
+                </div>
+            </div>
+
+            <div id="resetStatus"
+                style="display:none;margin-top:12px;padding:10px 12px;border-radius:6px;font-size:13px;font-weight:600;">
+            </div>
+            <div
+                style="margin-top:14px;padding:10px;background:#edf3ea;border:1px dashed #d8decf;border-radius:6px;font-size:11px;color:#60705d;line-height:1.55;">
+                <strong>Note:</strong> Password changes are stored in this browser. To persist server-side, update the
+                <code>gims_users</code> table in PostgreSQL.
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../js/config.js"></script>
+    <script type="module" src="../js/api.js"></script>
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/voice.js"></script>
+    <script type="module" src="../js/health.js"></script>
+
+</body>
+
+</html>
