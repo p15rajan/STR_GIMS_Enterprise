@@ -186,22 +186,22 @@ async function loadDashboard(){
 
 loadDashboard();
 
-document.querySelectorAll(".sidebar li").forEach(item=>{
+document.querySelectorAll(".sidebar li").forEach(item => {
 
-    item.onclick=async()=>{
+    item.onclick = async () => {
 
         document
-        .querySelectorAll(".sidebar li")
-        .forEach(x=>x.classList.remove("active"));
+            .querySelectorAll(".sidebar li")
+            .forEach(x => x.classList.remove("active"));
 
         item.classList.add("active");
 
-        const module=item.dataset.module;
+        const module = item.dataset.module;
 
-        if(module==="dashboard"){
+        if (module === "dashboard") {
 
-            document.getElementById("moduleContainer")
-            .innerHTML=document.getElementById("dashboardHome").outerHTML;
+            document.getElementById("moduleContainer").innerHTML =
+                document.getElementById("dashboardHome").outerHTML;
 
             loadDashboard();
 
@@ -209,39 +209,45 @@ document.querySelectorAll(".sidebar li").forEach(item=>{
 
         }
 
-        const response=await fetch("../modules/"+module+".html");
+        const response = await fetch("../modules/" + module + ".html");
 
-        if(!response.ok){
+        if (!response.ok) {
 
-            document.getElementById("moduleContainer").innerHTML=
-
-            "<div class='panel'><h2>"+module+"</h2><br>Module under development.</div>";
+            document.getElementById("moduleContainer").innerHTML =
+                "<div class='panel'><h2>" + module +
+                "</h2><br>Module under development.</div>";
 
             return;
 
         }
 
- document.getElementById("moduleContainer").innerHTML =
-    await response.text();
+        document.getElementById("moduleContainer").innerHTML =
+            await response.text();
 
-/* Initialize module after HTML is loaded */
+        switch (module) {
 
-switch (module) {
+            case "plants": {
 
-    case "plants": {
+                const mod = await import("../js/plants.js");
+                await mod.initializePlants();
+                break;
 
-        const mod = await import("../js/plants.js");
+            }
 
-        await mod.initializePlants();
+            case "animals": {
 
-        break;
-    }
+                const mod = await import("../js/animals.js");
+                await mod.initializeAnimals();
+                break;
 
-}
+            }
+
+        }
 
     };
 
-});
+});    
+
 
 </script>
 

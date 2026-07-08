@@ -1,0 +1,305 @@
+<div class="panel">
+
+    <h2>🐘 Animals Inventory</h2>
+
+    <div class="toolbar">
+
+        <div>
+
+            <button class="btn" id="btnRefresh">
+                🔄 Refresh
+            </button>
+
+            <button class="btn" id="btnAddAnimal">
+                ➕ Add Animal
+            </button>
+
+        </div>
+
+        <input
+            type="text"
+            id="txtSearch"
+            placeholder="Search Scientific Name...">
+
+    </div>
+
+    <br>
+
+    <table id="animalsTable">
+
+    <thead>
+
+        <tr>
+
+            <th>Scientific Name</th>
+
+            <th>Common Name</th>
+
+            <th>Forest Range</th>
+
+            <th>Gender</th>
+
+            <th>Age Class</th>
+
+            <th>Latitude</th>
+
+            <th>Longitude</th>
+
+            <th>Observed On</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        <tr>
+
+            <td colspan="9" align="center">
+
+                Loading...
+
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>
+
+</div>
+
+<!-- ===================== ADD ANIMAL MODAL ===================== -->
+
+<div id="animalModal" class="modal" style="display:none;">
+
+    <div class="modal-content">
+
+        <h2 id="animalModalTitle">
+            Add Animal Observation
+        </h2>
+  <table style="width:100%;border:none;">
+
+<tr>
+
+<td>Species</td>
+
+<td>
+
+<select id="cmbAnimalSpecies"
+style="width:100%;padding:8px;">
+</select>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Forest Range</td>
+
+<td>
+
+<select id="cmbAnimalRange"
+style="width:100%;padding:8px;">
+</select>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Gender</td>
+
+<td>
+
+<select id="cmbGender">
+
+<option>Male</option>
+
+<option>Female</option>
+
+<option>Unknown</option>
+
+</select>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Age Class</td>
+
+<td>
+
+<select id="cmbAgeClass">
+
+<option>Juvenile</option>
+
+<option>Sub Adult</option>
+
+<option>Adult</option>
+
+<option>Unknown</option>
+
+</select>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Latitude</td>
+
+<td>
+
+<input
+id="txtAnimalLatitude"
+type="number"
+step="0.000001">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Longitude</td>
+
+<td>
+
+<input
+id="txtAnimalLongitude"
+type="number"
+step="0.000001">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Observation Date</td>
+
+<td>
+
+<input
+id="txtAnimalObservedOn"
+type="date">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Remarks</td>
+
+<td>
+
+<textarea
+id="txtAnimalRemarks"
+rows="4"
+style="width:100%;"></textarea>
+
+</td>
+
+</tr>
+
+</table>
+
+        <br>
+
+        <div style="text-align:right;">
+
+            <button class="btn" id="btnSaveAnimal">
+
+                Save
+
+            </button>
+
+            <button class="btn" id="btnCancelAnimal">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ===========================================================
+     View Plant Modal
+============================================================ -->
+
+<div id="viewAnimalModal" class="modal" style="display:none;">
+
+    <div class="modal-content">
+
+        <h2>🐘 Animal Details</h2>
+
+        <table class="viewTable">
+
+    <tr>
+        <td><b>Scientific Name</b></td>
+        <td id="viewAnimalScientific"></td>
+    </tr>
+
+    <tr>
+        <td><b>Common Name</b></td>
+        <td id="viewAnimalCommon"></td>
+    </tr>
+
+    <tr>
+        <td><b>Forest Range</b></td>
+        <td id="viewAnimalRange"></td>
+    </tr>
+
+    <tr>
+        <td><b>Gender</b></td>
+        <td id="viewAnimalGender"></td>
+    </tr>
+
+    <tr>
+        <td><b>Age Class</b></td>
+        <td id="viewAnimalAgeClass"></td>
+    </tr>
+
+    <tr>
+        <td><b>Latitude</b></td>
+        <td id="viewAnimalLatitude"></td>
+    </tr>
+
+    <tr>
+        <td><b>Longitude</b></td>
+        <td id="viewAnimalLongitude"></td>
+    </tr>
+
+    <tr>
+        <td><b>Observed On</b></td>
+        <td id="viewAnimalObservedOn"></td>
+    </tr>
+
+    <tr>
+        <td><b>Remarks</b></td>
+        <td id="viewAnimalRemarks"></td>
+    </tr>
+            </table>
+
+        <br>
+
+        <button id="btnCloseAnimalView">
+
+            Close
+
+        </button>
+
+    </div>
+
+</div>

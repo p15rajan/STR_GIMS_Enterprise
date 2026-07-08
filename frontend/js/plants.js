@@ -2,24 +2,32 @@
  STR GIMS Enterprise
  Plants Module
 *********************************************************************/
-
 import {
-    getPlants,
+    getPlants as getPlantsApi,
+    getPlant as getPlantApi,
     getSpecies,
     getForestRanges,
-    addPlant
+    addPlant as addPlantApi,
+    updatePlant as updatePlantApi,
+    deletePlant as deletePlantApi
 } from "./api.js";
+
 
 let plants = [];
 let filteredPlants = [];
 
+let editingPlantId = null;
+
 const session = JSON.parse(sessionStorage.getItem("gims_session"));
 
 /*********************************************************************
- Initialize
+ Initialize Plants
 *********************************************************************/
 export async function initializePlants() {
-
+    
+    
+    console.log("Plants initialized");
+    
     registerEvents();
 
     await loadSpecies();
@@ -54,7 +62,7 @@ async function loadPlants() {
 
     try {
 
-        plants = await getPlants();
+        plants = await getPlantsApi();
 
         filteredPlants = [...plants];
 
@@ -273,13 +281,17 @@ async function loadForestRanges() {
 *********************************************************************/
 function openPlantModal() {
 
+    // New record
+    editingPlantId = null;
+
+    clearPlantForm();
+
     document.getElementById("plantModal").style.display = "block";
 
     document.getElementById("txtObservedOn").value =
         new Date().toISOString().split("T")[0];
 
 }
-
 /*********************************************************************
  Close Modal
 *********************************************************************/
@@ -322,24 +334,38 @@ async function savePlant() {
 
         }
 
-        await addPlant(
+ if (editingPlantId === null) {
 
-            species,
+    await addPlantApi(
 
-            range,
+        species,
+        range,
+        latitude,
+        longitude,
+        observedOn,
+        session.user_id,
+        remarks
 
-            latitude,
+    );
 
-            longitude,
+} else {
 
-            observedOn,
+    await updatePlantApi(
 
-            session.user_id,
+        editingPlantId,
+        species,
+        range,
+        latitude,
+        longitude,
+        observedOn,
+        remarks
 
-            remarks
+    );
+	
+	
+	
 
-        );
-
+}
        alert("✅ Plant saved successfully.");
 
        clearPlantForm();
@@ -363,27 +389,144 @@ async function savePlant() {
 /*********************************************************************
  Edit Plant
 *********************************************************************/
-async function editPlant(id){
+async function editPlant(id) {
 
-    console.log("Edit", id);
+    try {
+
+        const data = await getPlantApi(id);
+
+        if (!data || data.length === 0) {
+
+            alert("Plant record not found.");
+
+            return;
+
+        }
+
+        const p = data[0];
+
+        editingPlantId = id;
+
+        document.getElementById("cmbSpecies").value =
+            p.species_id;
+
+        document.getElementById("cmbRange").value =
+            p.range_id;
+
+        document.getElementById("txtLatitude").value =
+            p.latitude;
+
+        document.getElementById("txtLongitude").value =
+            p.longitude;
+
+        document.getElementById("txtObservedOn").value =
+            p.observed_on;
+
+        document.getElementById("txtRemarks").value =
+            p.remarks ?? "";
+
+        document.getElementById("plantModal").style.display =
+            "block";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        alert("Unable to load plant details.");
+
+    }
 
 }
 
 /*********************************************************************
  Delete Plant
 *********************************************************************/
-async function deletePlant(id){
+async function deletePlant(id) {
 
-    console.log("Delete", id);
+    const ok = confirm(
+        "Are you sure you want to delete this plant observation?"
+    );
+
+    if (!ok)
+        return;
+
+    try {
+
+        await deletePlantApi(id);
+
+        alert("✅ Plant deleted successfully.");
+
+        await loadPlants();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        alert("Unable to delete plant.\n\n" + err.message);
+
+    }
 
 }
-
+/*********************************************************************
+ View Plant
+*********************************************************************/
 /*********************************************************************
  View Plant
 *********************************************************************/
 async function viewPlant(id){
 
-    console.log("View", id);
+    try{
+
+        const data = await getPlantApi(id);
+
+        console.log(data);
+
+        if(!data || data.length === 0){
+
+            alert("Plant not found.");
+
+            return;
+
+        }
+
+        const p = data[0];
+
+        document.getElementById("viewScientific").innerHTML =
+            p.scientific_name ?? "";
+
+        document.getElementById("viewCommon").innerHTML =
+            p.common_name ?? "";
+
+        document.getElementById("viewRange").innerHTML =
+            p.range_name ?? "";
+
+        document.getElementById("viewLatitude").innerHTML =
+            p.latitude;
+
+        document.getElementById("viewLongitude").innerHTML =
+            p.longitude;
+
+        document.getElementById("viewObservedOn").innerHTML =
+            p.observed_on;
+
+        document.getElementById("viewRemarks").innerHTML =
+            p.remarks ?? "";
+
+        document.getElementById("viewPlantModal").style.display =
+            "block";
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert("Unable to load plant.");
+
+    }
 
 }
 
