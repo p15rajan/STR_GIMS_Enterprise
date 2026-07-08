@@ -156,7 +156,7 @@ export async function addPlant(
 export async function getAnimal(id) {
 
     return await post("get_animal", {
-        p_animal_id: id
+        a_animal_id: id
     });
 
 }

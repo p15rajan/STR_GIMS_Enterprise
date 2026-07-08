@@ -214,7 +214,7 @@ function registerGridEvents() {
 
             btn.onclick = () => {
 
-                editAnimal(Number(btn.dataset.id));
+                editAnimal(btn.dataset.id);
 
             };
 
@@ -226,7 +226,7 @@ function registerGridEvents() {
 
             btn.onclick = () => {
 
-                deleteAnimalRecord(Number(btn.dataset.id));
+                deleteAnimalRecord(btn.dataset.id);
 
             };
 
@@ -238,7 +238,7 @@ function registerGridEvents() {
 
             btn.onclick = () => {
 
-                viewAnimal(Number(btn.dataset.id));
+                viewAnimal(btn.dataset.id);
 
             };
 
@@ -478,12 +478,15 @@ async function editAnimal(id) {
 
     try {
 
+        console.log("Edit Animal ID:", id);
+
         const data = await getAnimal(id);
+
+        console.log("Returned Animal:", data);
 
         if (!data || data.length === 0) {
 
             alert("Animal observation not found.");
-
             return;
 
         }
@@ -495,45 +498,26 @@ async function editAnimal(id) {
         document.getElementById("animalModalTitle").innerHTML =
             "Edit Animal Observation";
 
-        document.getElementById("cmbAnimalSpecies").value =
-            a.species_id;
+        document.getElementById("cmbAnimalSpecies").value = a.species_id;
+        document.getElementById("cmbAnimalRange").value = a.range_id;
+        document.getElementById("cmbGender").value = a.gender;
+        document.getElementById("cmbAgeClass").value = a.age_class;
+        document.getElementById("txtAnimalLatitude").value = a.latitude;
+        document.getElementById("txtAnimalLongitude").value = a.longitude;
+        document.getElementById("txtAnimalObservedOn").value = a.observed_on;
+        document.getElementById("txtAnimalRemarks").value = a.remarks ?? "";
 
-        document.getElementById("cmbAnimalRange").value =
-            a.range_id;
-
-        document.getElementById("cmbGender").value =
-            a.gender;
-
-        document.getElementById("cmbAgeClass").value =
-            a.age_class;
-
-        document.getElementById("txtAnimalLatitude").value =
-            a.latitude;
-
-        document.getElementById("txtAnimalLongitude").value =
-            a.longitude;
-
-        document.getElementById("txtAnimalObservedOn").value =
-            a.observed_on;
-
-        document.getElementById("txtAnimalRemarks").value =
-            a.remarks ?? "";
-
-        document.getElementById("animalModal").style.display =
-            "block";
+        document.getElementById("animalModal").style.display = "block";
 
     }
-
     catch (err) {
 
         console.error(err);
-
-        alert("Unable to load animal details.");
+        alert("Unable to load animal details.\n\n" + err.message);
 
     }
 
 }
-
 /*********************************************************************
  Delete Animal
 *********************************************************************/
