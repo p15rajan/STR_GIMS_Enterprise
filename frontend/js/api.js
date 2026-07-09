@@ -226,3 +226,131 @@ export async function deleteAnimal(id) {
     });
 
 }
+
+/*********************************************************************
+ FOREST RANGES CRUD
+*********************************************************************/
+
+export async function getForestRange(id) {
+
+    return await post("get_forest_range", {
+
+        a_range_id: id
+
+    });
+
+}
+
+export async function addForestRange(
+    rangeName,
+    division,
+    district
+) {
+
+    return await post("add_forest_range", {
+
+        a_range_name: rangeName,
+        a_division: division,
+        a_district: district
+
+    });
+
+}
+
+export async function updateForestRange(
+    id,
+    rangeName,
+    division,
+    district
+) {
+
+    return await post("update_forest_range", {
+
+        a_range_id: id,
+        a_range_name: rangeName,
+        a_division: division,
+        a_district: district
+
+    });
+
+}
+
+export async function deleteForestRange(id) {
+
+    return await post("delete_forest_range", {
+
+        a_range_id: id
+
+    });
+
+}
+
+/*********************************************************************
+ SPECIES CRUD
+*********************************************************************/
+
+export async function getSpeciesById(id) {
+
+    return await post("get_species_by_id", {
+
+        a_species_id: id
+
+    });
+
+}
+
+export async function addSpecies(
+    scientificName,
+    commonName,
+    kingdom,
+    family,
+    iucn,
+    category
+) {
+
+    return await post("add_species", {
+
+        a_scientific_name: scientificName,
+        a_common_name: commonName,
+        a_kingdom: kingdom,
+        a_family: family,
+        a_iucn_status: iucn,
+        a_category: category
+
+    });
+
+}
+
+export async function updateSpecies(
+    id,
+    scientificName,
+    commonName,
+    kingdom,
+    family,
+    iucn,
+    category
+) {
+
+    return await post("update_species", {
+
+        a_species_id: id,
+        a_scientific_name: scientificName,
+        a_common_name: commonName,
+        a_kingdom: kingdom,
+        a_family: family,
+        a_iucn_status: iucn,
+        a_category: category
+
+    });
+
+}
+
+export async function deleteSpecies(id) {
+
+    return await post("delete_species", {
+
+        a_species_id: id
+
+    });
+
+}

@@ -1,0 +1,77 @@
+<div class="page">
+
+    <h2>Species Management</h2>
+
+    <div class="card">
+
+        <label>Scientific Name</label>
+        <input id="txtScientificName">
+
+        <label>Common Name</label>
+        <input id="txtCommonName">
+
+        <label>Kingdom</label>
+        <input id="txtKingdom">
+
+        <label>Family</label>
+        <input id="txtFamily">
+
+        <label>IUCN Status</label>
+        <select id="cmbIUCN">
+
+            <option value="">-- Select --</option>
+            <option>Least Concern</option>
+            <option>Near Threatened</option>
+            <option>Vulnerable</option>
+            <option>Endangered</option>
+            <option>Critically Endangered</option>
+            <option>Extinct in the Wild</option>
+            <option>Extinct</option>
+
+        </select>
+
+        <label>Category</label>
+        <select id="cmbCategory">
+
+            <option value="">-- Select --</option>
+            <option>Plant</option>
+            <option>Animal</option>
+
+        </select>
+
+        <div class="buttonBar">
+
+            <button id="btnSaveSpecies">Save</button>
+
+            <button id="btnClearSpecies">Clear</button>
+
+        </div>
+
+    </div>
+
+    <table id="tblSpecies" class="grid">
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Scientific Name</th>
+                <th>Common Name</th>
+                <th>Kingdom</th>
+                <th>Family</th>
+                <th>IUCN</th>
+                <th>Category</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</div>

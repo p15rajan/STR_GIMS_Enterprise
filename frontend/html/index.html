@@ -223,24 +223,40 @@ document.querySelectorAll(".sidebar li").forEach(item => {
 
         document.getElementById("moduleContainer").innerHTML =
             await response.text();
+switch (module) {
 
-        switch (module) {
+    case "plants": {
 
-            case "plants": {
+        const mod = await import("../js/plants.js");
+        await mod.initializePlants();
+        break;
 
-                const mod = await import("../js/plants.js");
-                await mod.initializePlants();
-                break;
+    }
 
-            }
+    case "animals": {
 
-            case "animals": {
+        const mod = await import("../js/animals.js");
+        await mod.initializeAnimals();
+        break;
 
-                const mod = await import("../js/animals.js");
-                await mod.initializeAnimals();
-                break;
+    }
 
-            }
+    case "ranges": {
+
+        const mod = await import("../js/ranges.js");
+        await mod.initializeRanges();
+        break;
+
+    }
+
+    case "species": {
+    const mod = await import("../js/species.js");
+    await mod.initializeSpecies();
+    break;
+
+}
+
+
 
         }
 
