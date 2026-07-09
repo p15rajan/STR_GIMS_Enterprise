@@ -9,10 +9,13 @@
 <title>STR GIMS Enterprise</title>
 
 <link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 
 </head>
 
 <body>
+    
 
 <header>
 
@@ -60,6 +63,10 @@
                 📁 Projects
             </li>
 
+            <li data-module="map">
+                🗺 GIS Map
+            </li>
+
             <li data-module="reports">
                 📊 Reports
             </li>
@@ -80,43 +87,78 @@
 
         <div id="moduleContainer">
 
-            <div id="dashboardHome">
+         <div class="dashboard">
 
-                <div class="cards">
+    <div class="dashboard-cards">
 
-                    <div class="card">
-                        <h3>Plants</h3>
-                        <h1 id="plants">0</h1>
-                    </div>
+        <div class="card" id="cardPlants">
+            <div class="cardIcon">🌳</div>
+            <div class="cardValue" id="plantCount">0</div>
+            <div class="cardTitle">Plants</div>
+        </div>
 
-                    <div class="card">
-                        <h3>Animals</h3>
-                        <h1 id="animals">0</h1>
-                    </div>
+        <div class="card" id="cardAnimals">
+            <div class="cardIcon">🐘</div>
+            <div class="cardValue" id="animalCount">0</div>
+            <div class="cardTitle">Animals</div>
+        </div>
 
-                    <div class="card">
-                        <h3>Species</h3>
-                        <h1 id="species">0</h1>
-                    </div>
+        <div class="card" id="cardSpecies">
+            <div class="cardIcon">🌿</div>
+            <div class="cardValue" id="speciesCount">0</div>
+            <div class="cardTitle">Species</div>
+        </div>
 
-                    <div class="card">
-                        <h3>Forest Ranges</h3>
-                        <h1 id="ranges">0</h1>
-                    </div>
+        <div class="card" id="cardRanges">
+            <div class="cardIcon">🌲</div>
+            <div class="cardValue" id="rangeCount">0</div>
+            <div class="cardTitle">Forest Ranges</div>
+        </div>
 
-                </div>
+    </div>
 
-                <div class="panel">
+    <div class="mapContainer">
 
-                    <h2>Welcome to STR GIMS Enterprise</h2>
+        <div class="mapToolbar">
 
-                    <p>
+            <button id="btnOSM">OpenStreetMap</button>
 
-                        Select a module from the navigation menu.
+            <button id="btnPlantsLayer">Plants</button>
 
-                    </p>
+            <button id="btnAnimalsLayer">Animals</button>
 
-                </div>
+            <button id="btnBothLayers">Both</button>
+
+            <button id="btnClearLayers">Clear</button>
+
+        </div>
+
+        <div id="map"></div>
+
+    </div>
+
+    <div class="bottomPanels">
+
+        <div class="panel">
+
+            <h3>Recent Plant Observations</h3>
+
+            <table id="recentPlants"></table>
+
+        </div>
+
+        <div class="panel">
+
+            <h3>Recent Animal Observations</h3>
+
+            <table id="recentAnimals"></table>
+
+        </div>
+
+    </div>
+
+</div>
+ 
 
             </div>
 
@@ -126,65 +168,64 @@
 
 </div>
 
+<!-- Load Leaflet FIRST -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"> </script> 
 <script type="module">
 
+
 import CONFIG from "../js/config.js";
-import {getDashboard} from "../js/api.js";
 
-const session =
-JSON.parse(sessionStorage.getItem("gims_session"));
+const session = JSON.parse(sessionStorage.getItem("gims_session"));
 
-if(!session){
-
-    location.href="login.html";
-
+if (!session) {
+    location.href = "login.html";
 }
 
-document.getElementById("userLabel").innerHTML=
-"Welcome, "+session.full_name;
+document.getElementById("userLabel").innerHTML =
+    "Welcome, " + session.full_name;
 
-document.getElementById("logout").onclick=function(){
+document.getElementById("logout").onclick = () => {
 
     sessionStorage.clear();
 
-    location.href="login.html";
+    location.href = "login.html";
 
 };
 
-async function loadDashboard(){
+/*----------------------------------------------------------
+    Save Dashboard HTML
+-----------------------------------------------------------*/
 
-    try{
+const moduleContainer =
+    document.getElementById("moduleContainer");
 
-        const data=await getDashboard();
+const dashboardHTML =
+    moduleContainer.innerHTML;
 
-        if(!data.length)
-            return;
+/*----------------------------------------------------------
+    Load Dashboard
+-----------------------------------------------------------*/
 
-        const d=data[0];
+async function showDashboard() {
 
-        document.getElementById("plants").innerHTML=
-        d.total_plants ?? 0;
+    moduleContainer.innerHTML = dashboardHTML;
 
-        document.getElementById("animals").innerHTML=
-        d.total_animals ?? 0;
+    const dashboard =
+        await import("../js/dashboard.js");
 
-        document.getElementById("species").innerHTML=
-        (d.plant_species ?? 0)+(d.animal_species ?? 0);
-
-        document.getElementById("ranges").innerHTML=
-        d.forest_ranges ?? 0;
-
-    }
-
-    catch(err){
-
-        console.error(err);
-
-    }
+    await dashboard.initializeDashboard();
 
 }
 
-loadDashboard();
+/*----------------------------------------------------------
+    First Screen
+-----------------------------------------------------------*/
+
+await showDashboard();
+
+/*----------------------------------------------------------
+    Navigation
+-----------------------------------------------------------*/
 
 document.querySelectorAll(".sidebar li").forEach(item => {
 
@@ -200,73 +241,100 @@ document.querySelectorAll(".sidebar li").forEach(item => {
 
         if (module === "dashboard") {
 
-            document.getElementById("moduleContainer").innerHTML =
-                document.getElementById("dashboardHome").outerHTML;
-
-            loadDashboard();
+            await showDashboard();
 
             return;
 
         }
 
-        const response = await fetch("../modules/" + module + ".html");
+        const response =
+            await fetch("../modules/" + module + ".html");
 
         if (!response.ok) {
 
-            document.getElementById("moduleContainer").innerHTML =
-                "<div class='panel'><h2>" + module +
-                "</h2><br>Module under development.</div>";
+            moduleContainer.innerHTML =
+
+            `<div class="panel">
+
+                <h2>${module}</h2>
+
+                <br>
+
+                Module under development.
+
+            </div>`;
 
             return;
 
         }
 
-        document.getElementById("moduleContainer").innerHTML =
+        moduleContainer.innerHTML =
             await response.text();
-switch (module) {
 
-    case "plants": {
+        switch (module) {
 
-        const mod = await import("../js/plants.js");
-        await mod.initializePlants();
-        break;
+            case "plants": {
 
-    }
+                const mod =
+                    await import("../js/plants.js");
 
-    case "animals": {
+                await mod.initializePlants();
 
-        const mod = await import("../js/animals.js");
-        await mod.initializeAnimals();
-        break;
+                break;
 
-    }
+            }
 
-    case "ranges": {
+            case "animals": {
 
-        const mod = await import("../js/ranges.js");
-        await mod.initializeRanges();
-        break;
+                const mod =
+                    await import("../js/animals.js");
 
-    }
+                await mod.initializeAnimals();
 
-    case "species": {
-    const mod = await import("../js/species.js");
-    await mod.initializeSpecies();
-    break;
+                break;
 
-}
+            }
 
+            case "species": {
 
+                const mod =
+                    await import("../js/species.js");
+
+                await mod.initializeSpecies();
+
+                break;
+
+            }
+
+            case "ranges": {
+
+                const mod =
+                    await import("../js/ranges.js");
+
+                await mod.initializeRanges();
+
+                break;
+
+            }
+
+            case "map": {
+
+                const mod =
+                    await import("../js/map.js");
+
+                await mod.initializeMap();
+
+                break;
+
+            }
 
         }
 
     };
 
-});    
-
+});
 
 </script>
-
 </body>
 
 </html>

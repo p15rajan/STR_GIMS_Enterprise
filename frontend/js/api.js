@@ -97,12 +97,6 @@ export async function deletePlant(id) {
 }
 
 
-
-
-
-
-
-
 export async function getAnimals() {
 
     return await post("get_animals");
